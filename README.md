@@ -16,6 +16,9 @@ Essentially, it's a more configurable "@a" argument that works on any command.
 
 /athere delay (integer) <- Sets the delay in milliseconds between each command's execution
 
+/athere stop <- Stops every running AtHere task
+
+/athere status <- Displays AtHere's current statuses
 
 As AtHere's functionality is limited to online players, I advise against using it on commands that don't take in player arguments.
 
