@@ -12,7 +12,6 @@ import java.util.List;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class CommandProcessMixin {
-
 	@Inject(method = "sendChatCommand", at = @At("HEAD"), cancellable = true)
 	private void onCommand(String content, CallbackInfo ci) {
 		String cmd = content.toLowerCase();

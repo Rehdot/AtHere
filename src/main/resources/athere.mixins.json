@@ -3,7 +3,9 @@
 	"package": "redot.athere.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"CommandProcessMixin"
+		"CommandProcessMixin",
+		"TabCompleteMixin",
+		"SuggestionMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
