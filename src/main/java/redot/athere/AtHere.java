@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.LongArgumentType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandRegistryAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
