@@ -1,5 +1,7 @@
 package redot.athere;
 
+import java.util.stream.Collectors;
+
 public record MSG() {
     public static String
             init = "AtHere Initialized.",
@@ -12,8 +14,12 @@ public record MSG() {
         return "Set delay to " + CMDProcess.delay + " milliseconds.";
     }
 
-    public static String setExclusion() {
-        return "Set self exclusion to " + (CMDProcess.excludeSelf ? "true" : "false") + ".";
+    public static String addExclusion(String playerName) {
+        return "Now excluding " + playerName + ".";
+    }
+
+    public static String addInclusion(String playerName) {
+        return "Now including " + playerName + ".";
     }
 
     public static String delayStatus() {
@@ -21,6 +27,7 @@ public record MSG() {
     }
 
     public static String exclusionStatus() {
-        return "\nSelf exclusion: " + (CMDProcess.excludeSelf ? "true" : "false");
+        String ei = CMDProcess.exclusions.stream().map(Object::toString).collect(Collectors.joining(", "));
+        return "\nExcluded individuals: " + (ei.isEmpty() ? "None." : ei);
     }
 }

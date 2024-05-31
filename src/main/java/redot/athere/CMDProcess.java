@@ -11,26 +11,22 @@ import java.util.concurrent.TimeUnit;
 
 public class CMDProcess {
     private static MinecraftClient client = MinecraftClient.getInstance();
-    public static boolean excludeSelf = false;
+    public static List<String> exclusions = new ArrayList<>();
     public static int delay = 100;
     static List<ScheduledExecutorService> schedulers = new ArrayList<>();
 
     public static void processAtHere(String cmd) {
-        List<String> onlinePlayers = client.getNetworkHandler().getPlayerList().stream()
-                .map(PlayerListEntry::getProfile)
-                .map(GameProfile::getName).toList();
-        String senderName = client.player.getName().getString();
+        if (getOnlinePlayers().isEmpty()) return;
 
-        if (onlinePlayers.isEmpty()) return;
-
+        MSGManager.sendPlayerMSG("Starting task.");
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         schedulers.add(scheduler);
 
         int delayMultiplier = 0;
-        for (int i = 0; i < onlinePlayers.size(); i++) {
-            String playerName = onlinePlayers.get(i);
+        for (int i = 0; i < getOnlinePlayers().size(); i++) {
+            String playerName = getOnlinePlayers().get(i);
 
-            if (Objects.equals(senderName, playerName) && excludeSelf) {
+            if (exclusions.contains(playerName.toLowerCase())) {
                 continue;
             }
 
@@ -46,11 +42,13 @@ public class CMDProcess {
     }
 
     public static void processCommand(List<String> args) {
+        String playerName;
+
         if (args.get(1) == null) {
             MSGManager.sendPlayerMSG(MSG.nullSubCMD);
         }
 
-        switch (args.get(1)) {
+        switch (args.get(1).toLowerCase()) {
             case "delay":
                 if (args.get(2) == null) {
                     MSGManager.sendPlayerMSG(MSG.nullArgs);
@@ -68,8 +66,25 @@ public class CMDProcess {
                 MSGManager.sendPlayerMSG(MSG.shutDownTasks);
                 break;
             case "exclude":
-                excludeSelf = !excludeSelf;
-                MSGManager.sendPlayerMSG(MSG.setExclusion());
+                try { playerName = args.get(2); }
+                catch (ArrayIndexOutOfBoundsException ignored) {
+                    playerName = client.player.getName().getString();
+                }
+
+                if (!exclusions.contains(playerName.toLowerCase())) {
+                    exclusions.add(playerName.toLowerCase());
+                }
+
+                MSGManager.sendPlayerMSG(MSG.addExclusion(playerName));
+                break;
+            case "include":
+                try { playerName = args.get(2); }
+                catch (ArrayIndexOutOfBoundsException ignored) {
+                    playerName = client.player.getName().getString();
+                }
+
+                exclusions.remove(playerName.toLowerCase());
+                MSGManager.sendPlayerMSG(MSG.addInclusion(playerName));
                 break;
             case "help":
                 MSGManager.sendHelpMSG();
@@ -81,5 +96,11 @@ public class CMDProcess {
                 MSGManager.sendPlayerMSG(MSG.nullSubCMD);
                 break;
         }
+    }
+
+    public static List<String> getOnlinePlayers() {
+        return client.getNetworkHandler().getPlayerList().stream()
+                .map(PlayerListEntry::getProfile)
+                .map(GameProfile::getName).toList();
     }
 }

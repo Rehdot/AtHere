@@ -1,13 +1,16 @@
 package redot.athere.mixin;
 
+import com.mojang.brigadier.Message;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.play.CommandSuggestionsS2CPacket;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import redot.athere.CMDProcess;
 
 import java.util.List;
 
@@ -19,7 +22,9 @@ public class SuggestionMixin {
         String name = MinecraftClient.getInstance().player.getName().getString();
 
         if (suggestions.contains(name)) {
-            Suggestion atHere = new Suggestion(cir.getReturnValue().getRange(), "@here");
+            long playerCount = CMDProcess.getOnlinePlayers().stream().count();
+            Message msg = Text.literal("Runs this command "+playerCount+" time"+(playerCount==1?"":"s")+".");
+            Suggestion atHere = new Suggestion(cir.getReturnValue().getRange(), "@here", msg);
             cir.getReturnValue().getList().add(atHere);
         }
     }

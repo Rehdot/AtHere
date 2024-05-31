@@ -18,7 +18,7 @@ public class CommandProcessMixin {
 
 		if (cmd.startsWith("athere")) {
 			ci.cancel();
-			List<String> args = Arrays.stream(cmd.split(" ")).toList();
+			List<String> args = Arrays.stream(content.split(" ")).toList();
 			CMDProcess.processCommand(args);
 			return;
 		}
