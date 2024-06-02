@@ -24,7 +24,8 @@ public class MSGManager {
                 "\nWhen typing commands, using '@here' in place of a player will execute that command once for each online player!" +
                 "\nMy commands include:" +
                 "\n/athere delay (milliseconds) <- Sets a custom delay between each command" +
-                "\n/athere exclude <- Toggles on/off whether to include yourself in the command execution" +
+                "\n/athere exclude (player) <- Excludes a player from command execution" +
+                "\n/athere include (player) <- Includes a previously-excluded player from command execution" +
                 "\n/athere status <- Displays AtHere's statuses" +
                 "\n/athere stop <- Stops all running AtHere tasks");
     }

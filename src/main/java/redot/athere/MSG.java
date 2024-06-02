@@ -4,14 +4,12 @@ import java.util.stream.Collectors;
 
 public record MSG() {
     public static String
-            init = "AtHere Initialized.",
-            nullSubCMD = "Subcommand not recognized. Try '/athere help'.",
-            nullArgs = "Please provide an argument.",
-            invalidArgs = "The provided arguments are invalid. Try '/athere help'.",
-            shutDownTasks = "Stopped all running AtHere tasks.";
+            init = "AtHere initialized.",
+            shutDownTasks = "Stopped all running AtHere tasks.",
+            clearExclusions = "Cleared AtHere's exclusions.";
 
     public static String setDelay() {
-        return "Set delay to " + CMDProcess.delay + " milliseconds.";
+        return "Set delay to "+AtHere.delay+" millisecond"+(AtHere.delay==1?"":"s")+".";
     }
 
     public static String addExclusion(String playerName) {
@@ -23,11 +21,11 @@ public record MSG() {
     }
 
     public static String delayStatus() {
-        return "\nCommand delay: " + CMDProcess.delay + " milliseconds.";
+        return "Statuses:\nCommand delay: "+AtHere.delay+" millisecond"+(AtHere.delay==1?"":"s");
     }
 
     public static String exclusionStatus() {
-        String ei = CMDProcess.exclusions.stream().map(Object::toString).collect(Collectors.joining(", "));
+        String ei = AtHere.exclusions.stream().map(Object::toString).collect(Collectors.joining(", "));
         return "\nExcluded individuals: " + (ei.isEmpty() ? "None." : ei);
     }
 }

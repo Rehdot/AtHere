@@ -7,23 +7,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import redot.athere.CMDProcess;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Mixin(ClientPlayNetworkHandler.class)
 public class CommandProcessMixin {
 	@Inject(method = "sendChatCommand", at = @At("HEAD"), cancellable = true)
 	private void onCommand(String content, CallbackInfo ci) {
 		String cmd = content.toLowerCase();
 
-		if (cmd.startsWith("athere")) {
-			ci.cancel();
-			List<String> args = Arrays.stream(content.split(" ")).toList();
-			CMDProcess.processCommand(args);
-			return;
-		}
-
 		if (!cmd.contains("@here")) return;
+
 		ci.cancel();
 		CMDProcess.processAtHere(cmd);
 	}
