@@ -1,21 +1,26 @@
 AtHere 1.0.3
 -
 AtHere is a small command helper intended for Minecraft server operators.
-Essentially, it's a more configurable "@a" argument that works on any command.
+
+Features
+-
+* The "@here" command argument, which executes a command for every player online.
+* The "@[number]->[number]" command argument, which counts up from the starting number to the ending number.
+* The "@step->[number]" argument modifier, which will affect how fast the number argument will count upwards.
 
 **Usage Examples:**
 -
-* /tphere @here <- Teleport all to you
+* /tphere @here <- Teleport everyone online to you
 * /msg @here hello! <- Message every player "hello!"
-* /gamemode creative @here <- Set everyone's gamemode to creative
-* /say Hello @here! <- Say hello to everyone online
-* /athere exclude @here <- Exclude every online player from command execution
+* /fill ~ ~ ~ ~ ~@0->200 ~ tnt <- Spawn in towers of TNT until Y=200
+* /give @here cooked_beef @1->9 <- Give everyone 45 steak
+* /tp @here ~ @300->2000 ~ @step->100 <- Teleport everyone up to 2000 blocks, 100 blocks at a time
 
 **Commands:**
 -
-* /athere exclude (player) <- Excludes a player from the command execution
-* /athere include (player) <- Includes a player from the command execution
-* /athere delay (integer) <- Sets the delay in milliseconds between each command's execution
+* /athere exclude [player] <- Excludes a player or argument from command execution
+* /athere include [player] <- Includes a player or argument from command execution
+* /athere delay [number] <- Sets the delay in milliseconds between each command's execution
 * /athere stop <- Stops every running AtHere task
 * /athere status <- Displays AtHere's current statuses
 

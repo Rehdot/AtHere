@@ -3,7 +3,7 @@
 	"id": "athere",
 	"version": "${version}",
 	"name": "AtHere",
-	"description": "A fabric mod that adds the basic functionality of '@here' to Minecraft's commands.",
+	"description": "A Minecraft command helper for server operators.",
 	"authors": [
 		"Redot"
 	],

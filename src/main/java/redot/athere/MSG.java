@@ -6,7 +6,8 @@ public record MSG() {
     public static String
             init = "AtHere initialized.",
             shutDownTasks = "Stopped all running AtHere tasks.",
-            clearExclusions = "Cleared AtHere's exclusions.";
+            clearExclusions = "Cleared AtHere's exclusions.",
+            clearInclusions = "Cleared AtHere's inclusions.";
 
     public static String setDelay() {
         return "Set delay to "+AtHere.delay+" millisecond"+(AtHere.delay==1?"":"s")+".";
@@ -25,7 +26,12 @@ public record MSG() {
     }
 
     public static String exclusionStatus() {
-        String ei = AtHere.exclusions.stream().map(Object::toString).collect(Collectors.joining(", "));
-        return "\nExcluded individuals: " + (ei.isEmpty() ? "None." : ei);
+        String ea = AtHere.exclusions.stream().map(Object::toString).collect(Collectors.joining(", "));
+        return "\nExcluded arguments: " + (ea.isEmpty() ? "None." : ea);
+    }
+
+    public static String inclusionStatus() {
+        String ia = AtHere.inclusions.stream().map(Object::toString).collect(Collectors.joining(", "));
+        return "\nIncluded arguments: " + (ia.isEmpty() ? "None." : ia);
     }
 }

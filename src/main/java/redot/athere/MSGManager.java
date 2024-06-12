@@ -31,6 +31,6 @@ public class MSGManager {
     }
 
     public static void sendStatusMSG() {
-        sendPlayerMSG(MSG.delayStatus() + MSG.exclusionStatus());
+        sendPlayerMSG(MSG.delayStatus() + MSG.exclusionStatus() + MSG.inclusionStatus());
     }
 }

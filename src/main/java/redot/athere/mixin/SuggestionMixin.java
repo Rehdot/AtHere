@@ -22,9 +22,10 @@ public class SuggestionMixin {
         String name = MinecraftClient.getInstance().player.getName().getString();
 
         if (suggestions.contains(name)) {
-            long playerCount = CMDProcess.getOnlinePlayers().stream().count();
+            long playerCount = CMDProcess.getOnlinePlayers().size();
             Message msg = Text.literal("Runs this command "+playerCount+" time"+(playerCount==1?"":"s")+".");
             Suggestion atHere = new Suggestion(cir.getReturnValue().getRange(), "@here", msg);
+
             cir.getReturnValue().getList().add(atHere);
         }
     }
