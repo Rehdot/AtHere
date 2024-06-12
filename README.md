@@ -1,4 +1,4 @@
-AtHere 1.0.3
+AtHere 1.0.4
 -
 AtHere is a small command helper intended for Minecraft server operators.
 
