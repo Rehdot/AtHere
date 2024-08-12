@@ -8,8 +8,13 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.command.CommandRegistryAccess;
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redot.athere.interfaces.LongExecutor;
@@ -27,32 +32,26 @@ public class AtHere implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("athere");
 	private static MinecraftClient client = MinecraftClient.getInstance();
 	public static List<ScheduledExecutorService> schedulers = new ArrayList<>();
-
-	// for inclusions make it to where it doesn't need to be a player name so command execution will work anyway,
-	// add number arguments to every command, so if I want to do something like "/claim tp Redot 1->40" I can do that
 	public static List<String> exclusions = new ArrayList<>(), inclusions = new ArrayList<>();
 	public static long delay = 100;
-	private static SuggestionProvider<FabricClientCommandSource> playerSuggestions = (context, builder) -> {
-		if (client.player != null) {
-			for (String entry : CMDProcess.getOnlinePlayers()) {
-				builder.suggest(entry);
-			}
-		}
-		return builder.buildFuture();
-	};
-
-	private static SuggestionProvider<FabricClientCommandSource> delaySuggestions = (context, builder) -> {
-		List<Integer> suggestions = List.of(100, 250, 500, 750, 1000, 1500, 3000, 5000, 7500, 10000);
-		for (int suggestion : suggestions) {
-			builder.suggest(suggestion);
-		}
-		return builder.buildFuture();
-	};
 
 	@Override
 	public void onInitialize() {
 		LOGGER.info(MSG.init);
 		ClientCommandRegistrationCallback.EVENT.register(this::registerAtHere);
+		registerKillKey();
+	}
+
+	private void registerKillKey() {
+		KeyBinding killKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+				"Kill All Tasks", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_K, "AtHere"
+		));
+
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			if (killKey.wasPressed()) {
+				stopAll();
+			}
+		});
 	}
 
 	private void registerAtHere(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess commandRegistryAccess) {
@@ -72,11 +71,6 @@ public class AtHere implements ModInitializer {
 					inclusions.add(player.toLowerCase());
 					MSGManager.sendPlayerMSG(MSG.addInclusion(player));
 				}))
-				.then(registerExecutor("stop", () -> {
-					schedulers.forEach(ExecutorService::shutdownNow);
-					schedulers.clear();
-					MSGManager.sendPlayerMSG(MSG.shutDownTasks);
-				}))
 				.then(registerExecutor("clearexclusions", () -> {
 					exclusions.clear();
 					MSGManager.sendPlayerMSG(MSG.clearExclusions);
@@ -85,10 +79,34 @@ public class AtHere implements ModInitializer {
 					inclusions.clear();
 					MSGManager.sendPlayerMSG(MSG.clearInclusions);
 				}))
+				.then(registerExecutor("stop", AtHere::stopAll))
 				.then(registerExecutor("help", MSGManager::sendHelpMSG))
 				.then(registerExecutor("status", MSGManager::sendStatusMSG))
 		);
 	}
+
+	private static void stopAll() {
+		schedulers.forEach(ExecutorService::shutdownNow);
+		schedulers.clear();
+		MSGManager.sendPlayerMSG(MSG.shutDownTasks);
+	}
+
+	private static SuggestionProvider<FabricClientCommandSource> playerSuggestions = (context, builder) -> {
+		if (client.player != null) {
+			for (String entry : CMDProcess.getOnlinePlayers()) {
+				builder.suggest(entry);
+			}
+		}
+		return builder.buildFuture();
+	};
+
+	private static SuggestionProvider<FabricClientCommandSource> delaySuggestions = (context, builder) -> {
+		List<Integer> suggestions = List.of(100, 250, 500, 750, 1000, 1500, 3000, 5000, 7500, 10000);
+		for (int suggestion : suggestions) {
+			builder.suggest(suggestion);
+		}
+		return builder.buildFuture();
+	};
 
 	private static LiteralArgumentBuilder<FabricClientCommandSource> registerExecutor(String name, Runnable executor) {
 		return literal(name).executes(context -> {
